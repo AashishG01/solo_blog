@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { required } from "zod/mini";
 
 const userSchema = new mongoose.Schema(
     {
@@ -18,6 +19,32 @@ const userSchema = new mongoose.Schema(
             required: true,
             minlength: 6,
         },
+        username:{
+            type:string, 
+            required: true,
+            unique:true, 
+            lowercase:true,
+            trim:true,
+        },
+        bio: {
+        type: String,
+        default: "",
+        maxlength: 300,
+        },
+        followers: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+            ],
+
+            following: [
+            {
+                type: mongoose.Schema.Types.ObjectId,
+                ref: "User",
+            },
+            ],
+
     },{
         timestamps: true,
     }
