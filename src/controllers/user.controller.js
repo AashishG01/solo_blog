@@ -1,10 +1,11 @@
 import User from "../models/user.model.js";
+import Article from "../models/article.model.js";
 import AppError from "../utils/AppError.js";
 import { createNotification } from "../services/notification.service.js";
 
 export const getAuthorProfile = async (req, reply) => {
   const user = await User.findOne({ username: req.params.username })
-    .select("name username bio createdAt");
+    .select("name username bio createdAt followers following");
 
   if (!user) {
     throw new AppError("User not found", 404);
@@ -12,19 +13,22 @@ export const getAuthorProfile = async (req, reply) => {
 
   const blogs = await Article.find({
     author: user._id,
-    published: true,
-  }).sort({ createdAt: -1 });
+    status: "published",
+  }).sort({ createdAt: -1 }).populate("author", "name username");
 
   return reply.send({
     success: true,
     user: {
+      _id: user._id,
       name: user.name,
       username: user.username,
       bio: user.bio,
       joinedAt: user.createdAt,
       totalBlogs: blogs.length,
+      followers: user.followers,
+      following: user.following,
     },
-    blogs,
+    articles: blogs,
   });
 };
 
@@ -57,9 +61,9 @@ export const followUser = async (req, reply) => {
   });
 
   await createNotification({
-  recipient: targetUserId,
-  sender: currentUserId,
-  type: "follow",
+    recipient: targetUserId,
+    sender: currentUserId,
+    type: "follow",
   });
 
   return reply.send({

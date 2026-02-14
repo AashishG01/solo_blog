@@ -1,4 +1,6 @@
 import Article from "../models/article.model.js";
+import AppError from "../utils/AppError.js";
+import { createNotification } from "../services/notification.service.js";
 
 export const deleteBlog = async (req, reply) => {
   const blog = await Article.findById(req.params.id);
@@ -182,10 +184,10 @@ export const likeBlog = async (req, reply) => {
   await blog.save();
 
   await createNotification({
-  recipient: blog.author,
-  sender: userId,
-  type: "like",
-  blog: blog._id,
+    recipient: blog.author,
+    sender: userId,
+    type: "like",
+    blog: blog._id,
   });
 
   return reply.send({
@@ -220,4 +222,53 @@ export const unlikeBlog = async (req, reply) => {
     likesCount: blog.likesCount,
   });
 };
+
+export const getBlogBySlug = async (req, reply) => {
+  const blog = await Article.findOne({
+    slug: req.params.slug,
+    status: "published",
+  }).populate("author", "name username");
+
+  if (!blog) {
+    throw new AppError("Blog not found", 404);
+  }
+
+  return reply.send({
+    success: true,
+    data: blog,
+  });
+};
+
+export const searchBlogs = async (req, reply) => {
+  const { q, page = 1, limit = 10 } = req.query;
+
+  if (!q) {
+    throw new AppError("Search query is required", 400);
+  }
+
+  const pageNumber = parseInt(page);
+  const limitNumber = parseInt(limit);
+  const skip = (pageNumber - 1) * limitNumber;
+
+  const blogs = await Article.find(
+    {
+      $text: { $search: q },
+      status: "published",
+    },
+    {
+      score: { $meta: "textScore" },
+    }
+  )
+    .sort({ score: { $meta: "textScore" } })
+    .skip(skip)
+    .limit(limitNumber)
+    .populate("author", "name username");
+
+  return reply.send({
+    success: true,
+    results: blogs.length,
+    data: blogs,
+  });
+};
+
 

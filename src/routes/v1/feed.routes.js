@@ -1,6 +1,6 @@
-import asyncHandler from "../utils/asyncHandler.js";
-import authMiddleware from "../middleware/auth.middleware.js";
-import { getFeed } from "../controllers/feed.controller.js";
+import asyncHandler from "../../utils/asyncHandler.js";
+import authMiddleware from "../../middleware/auth.middleware.js";
+import { getFeed } from "../../controllers/feed.controller.js";
 
 const feedRoutes = async (fastify) => {
   fastify.get(

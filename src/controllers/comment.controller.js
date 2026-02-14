@@ -1,6 +1,7 @@
 import Comment from "../models/comment.model.js";
 import Article from "../models/article.model.js";
 import AppError from "../utils/AppError.js";
+import { createNotification } from "../services/notification.service.js";
 
 export const addComment = async (req, reply) => {
   const blog = await Article.findById(req.params.id);
@@ -20,10 +21,10 @@ export const addComment = async (req, reply) => {
   });
 
   await createNotification({
-  recipient: blog.author,
-  sender: req.user.userId,
-  type: "comment",
-  blog: blog._id,
+    recipient: blog.author,
+    sender: req.user.userId,
+    type: "comment",
+    blog: blog._id,
   });
 
 

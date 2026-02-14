@@ -789,3 +789,20 @@ group all rotues under /api/v1 prefix
 when making breaking changes, create new version /api/v2 and update routes there
 keep structure clean for /api/v2 later 
 
+
+Slug system for SEO friendly URLs
+Problem -> currently hum apne blogs ke URLs me sirf blog ID use kar rahe hai, iska matlab hai ki hamare URLs SEO friendly nahi hai aur user experience bhi thoda poor hai, isliye hume apne blogs ke URLs me slug system implement karna chahiye jisse hum apne URLs ko SEO friendly aur user friendly bana sake
+Solution -> Slug ek URL friendly string hota hai jo blog ke title se generate hota hai, jab bhi user ek blog create karta hai to hum uske title se slug generate karenge aur usse blog document me store karenge, phir hum apne routes me blog ID ke sath slug bhi include karenge, jaise ki /blogs/:id/:slug, isse hamare URLs SEO friendly ho jayenge aur user experience bhi improve hoga
+
+WHY SLUGS?
+
+Instead of:
+/api/v1/blogs/65f23abce9123
+We want:
+/api/v1/blogs/how-to-learn-backend
+Benefits:
+SEO friendly
+Human readable
+Shareable
+Professional polish
+

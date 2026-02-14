@@ -1,53 +1,52 @@
 import mongoose from "mongoose";
-import { required } from "zod/mini";
 
 const userSchema = new mongoose.Schema(
     {
         name: {
             type: String,
-            required: true, 
+            required: true,
             trim: true,
         },
         email: {
-            type: String, 
+            type: String,
             required: true,
             unique: true,
-            lowercase: true, 
+            lowercase: true,
         },
-        password:{
-            type: String, 
+        password: {
+            type: String,
             required: true,
             minlength: 6,
         },
-        username:{
-            type:string, 
+        username: {
+            type: String,
             required: true,
-            unique:true, 
-            lowercase:true,
-            trim:true,
+            unique: true,
+            lowercase: true,
+            trim: true,
         },
         bio: {
-        type: String,
-        default: "",
-        maxlength: 300,
+            type: String,
+            default: "",
+            maxlength: 300,
         },
         followers: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
             },
-            ],
+        ],
 
-            following: [
+        following: [
             {
                 type: mongoose.Schema.Types.ObjectId,
                 ref: "User",
             },
-            ],
+        ],
 
-    },{
-        timestamps: true,
-    }
+    }, {
+    timestamps: true,
+}
 );
 
 const User = mongoose.model("User", userSchema);
